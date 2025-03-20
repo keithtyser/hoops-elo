@@ -8,12 +8,13 @@ A modular Python package for calculating and predicting ELO ratings for NCAA bas
 - Spread predictions based on ELO differences
 - Probability and American odds calculations with optional longshot bias
 - Team ranking and analysis
+- Web-based user interface for easy management and predictions
 
 ## Installation
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/hoops-elo.git
+   git clone https://github.com/keithtyser/hoops-elo.git
    cd hoops-elo
    ```
 
@@ -45,7 +46,7 @@ python main.py run --gender both --start-year 1985 --end-year 2025
 
 This will:
 1. Load all game data from 1985-2025
-2. Calculate ELO ratings using optimized parameters
+2. Calculate ELO ratings using parameters from config.json
 3. Save final ratings to JSON files
 4. Display top teams
 
@@ -94,6 +95,26 @@ In interactive mode, you can:
 - Update ratings for single games
 - View top-ranked teams
 
+### Web Interface
+
+For a modern, user-friendly web interface to the ELO rating system:
+
+```
+python web_ui.py
+```
+
+The web application will start locally on http://127.0.0.1:5000/. Features include:
+
+- **Dashboard:** View top-ranked teams with their current ELO ratings and trends
+- **Team Search:** Find teams by partial name matches
+- **Game Updates:** Enter game results to update ELO ratings
+- **Predictions:** Calculate point spreads and win probabilities between any two teams
+- **Gender Toggle:** Switch between men's and women's basketball data
+- **Revert Updates:** Easily undo recent rating updates
+- **Rating History:** View trending information with visual indicators for team performance
+
+The UI provides a convenient way to manage and visualize ELO ratings without needing to use the command line.
+
 ## Module Structure
 
 - `elo_ratings/`: Main package
@@ -102,7 +123,14 @@ In interactive mode, you can:
   - `utils.py`: Utility functions (odds conversion, etc.)
   - `analysis.py`: Functions for analysis and visualization
   - `cli.py`: Command-line interface
-- `main.py`: Main entry point
+  - `config.py`: Configuration management
+  - `web_ui.py`: Web interface backend
+- `main.py`: Main entry point for CLI
+- `web_ui.py`: Web application entry point
+- `templates/`: HTML templates for web interface
+- `static/`: CSS, JavaScript, and images for web interface
+- `config.json`: Configuration file (excluded from version control)
+- `config_template.json`: Template for configuration
 - `requirements.txt`: Package dependencies
 - `README.md`: This file
 
@@ -133,9 +161,9 @@ updated_ratings, _ = update_single_game(
     lose_score=67,
     location="H",  # Duke is home
     rating_dict=ratings,
-    k=140,
-    alpha=40,
-    home_court=75,
+    k=38,
+    alpha=5,
+    home_court=100,
     mov_formula="linear"
 )
 
