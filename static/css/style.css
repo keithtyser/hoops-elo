@@ -1,0 +1,85 @@
+/* Custom styles for NCAA Basketball ELO Rating System */
+
+/* Add some padding to the body */
+body {
+    padding-bottom: 2rem;
+}
+
+/* Card styling */
+.card {
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.card-header {
+    font-weight: 500;
+}
+
+/* Table styling */
+.table th {
+    font-weight: 600;
+}
+
+/* Custom background colors for ratings */
+.bg-rating-high {
+    background-color: #d4edda;
+}
+
+.bg-rating-medium {
+    background-color: #fff3cd;
+}
+
+.bg-rating-low {
+    background-color: #f8d7da;
+}
+
+/* Form controls */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Custom alert styles */
+.alert {
+    border-radius: 0.5rem;
+}
+
+/* Footer styling */
+.footer {
+    border-top: 1px solid #e9ecef;
+}
+
+/* Dashboard cards */
+.dashboard-card {
+    transition: transform 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Rating change indicators */
+.rating-up {
+    color: #28a745;
+}
+
+.rating-down {
+    color: #dc3545;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-title {
+        font-size: 1.25rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+} 

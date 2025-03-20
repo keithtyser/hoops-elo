@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - NCAA Basketball ELO Rating System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">{{ gender|capitalize }}'s Basketball Dashboard</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    Currently working with {{ gender|capitalize }}'s basketball data. 
+                    <span class="ms-1">Total teams with ratings: {{ total_teams }}</span>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-primary">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">Predictions</h5>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <p>Generate ELO-based predictions for games.</p>
+                                <div class="mt-auto">
+                                    <a href="{{ url_for('spread_prediction') }}?gender={{ gender }}" class="btn btn-outline-primary mb-2 w-100">
+                                        <i class="bi bi-graph-up me-2"></i>Predict Spread
+                                    </a>
+                                    <a href="{{ url_for('odds_prediction') }}?gender={{ gender }}" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-percent me-2"></i>Predict Odds
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-success">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="card-title mb-0">Updates</h5>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <p>Update team ratings based on game results.</p>
+                                <div class="mt-auto">
+                                    <a href="{{ url_for('update_game') }}?gender={{ gender }}" class="btn btn-outline-success mb-2 w-100">
+                                        <i class="bi bi-arrow-clockwise me-2"></i>Update Ratings
+                                    </a>
+                                    {% if can_revert %}
+                                    <a href="{{ url_for('revert_confirm') }}?gender={{ gender }}" class="btn btn-outline-danger w-100">
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i>Revert Last Update
+                                        <small class="d-block">({{ last_update_info }})</small>
+                                    </a>
+                                    {% else %}
+                                    <button class="btn btn-outline-secondary w-100" disabled>
+                                        <i class="bi bi-arrow-counterclockwise me-2"></i>No Updates to Revert
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-info">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="card-title mb-0">Explore</h5>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <p>Search for teams and explore ratings.</p>
+                                <div class="mt-auto">
+                                    <a href="{{ url_for('search') }}?gender={{ gender }}" class="btn btn-outline-info mb-2 w-100">
+                                        <i class="bi bi-search me-2"></i>Search Teams
+                                    </a>
+                                    <a href="{{ url_for('top_teams') }}?gender={{ gender }}" class="btn btn-outline-info w-100">
+                                        <i class="bi bi-trophy me-2"></i>View Top Teams
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-dark">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="card-title mb-0">Switch Data</h5>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <p>Switch between men's and women's basketball data.</p>
+                                <div class="mt-auto d-grid">
+                                    <a href="{{ url_for('index') }}" class="btn btn-outline-dark">
+                                        <i class="bi bi-arrow-left-right me-2"></i>Change Gender Selection
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+{% endblock %} 

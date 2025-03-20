@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}Confirm Update - NCAA Basketball ELO Rating System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h2 class="card-title mb-0">Confirm Rating Update ({{ gender|capitalize }})</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning alert-permanent">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Please review the information before continuing.</strong> This action will permanently update ELO ratings for both teams.
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">Game Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h6>Winner</h6>
+                                <p class="mb-0">{{ winner_name }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6>Loser</h6>
+                                <p class="mb-0">{{ loser_name }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h6>Score</h6>
+                                <p class="mb-0">{{ winner_score }} - {{ loser_score }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6>Location</h6>
+                                <p class="mb-0">{{ location_desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form action="{{ url_for('confirm_update') }}?gender={{ gender }}" method="post">
+                    <input type="hidden" name="winner_id" value="{{ winner_id }}">
+                    <input type="hidden" name="loser_id" value="{{ loser_id }}">
+                    <input type="hidden" name="winner_score" value="{{ winner_score }}">
+                    <input type="hidden" name="loser_score" value="{{ loser_score }}">
+                    <input type="hidden" name="location" value="{{ location }}">
+                    
+                    <div class="alert alert-danger alert-permanent">
+                        <i class="bi bi-shield-exclamation me-2"></i>
+                        This will update the ELO ratings for both teams. You can only revert the most recent update. Any subsequent updates will make this change permanent.
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Confirm and Update Ratings
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('update_game') }}?gender={{ gender }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Return to Form
+                    </a>
+                    <a href="{{ url_for('dashboard') }}?gender={{ gender }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

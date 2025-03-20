@@ -1,0 +1,24 @@
+{
+    "men": {
+        "initial_rating": 1500,
+        "k_factor": 38,
+        "alpha": 5,
+        "carryover": true,
+        "carryover_factor": 0.5,
+        "home_court": 100,
+        "slope": 0.01,
+        "mov_formula": "linear",
+        "weighting_scheme": null
+    },
+    "women": {
+        "initial_rating": 1500,
+        "k_factor": 38,
+        "alpha": 5,
+        "carryover": true,
+        "carryover_factor": 0.5,
+        "home_court": 100,
+        "slope": 0.01,
+        "mov_formula": "linear",
+        "weighting_scheme": null
+    }
+} 

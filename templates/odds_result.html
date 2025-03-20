@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block title %}Odds Prediction - NCAA Basketball ELO Rating System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block head_extra %}
+<meta http-equiv="refresh" content="none">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Win Probability &amp; Odds</h2>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h3 class="mb-3">{{ team_a }} vs {{ team_b }}</h3>
+                    
+                    {% if not applied_longshot %}
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="alert alert-info alert-permanent">
+                                <h4 class="alert-heading">Raw Win Probabilities</h4>
+                                <div class="row mb-2">
+                                    <div class="col-6 text-end fw-bold">{{ team_a }}:</div>
+                                    <div class="col-6">{{ "%.1f"|format(raw_prob_a * 100) }}%</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">{{ team_b }}:</div>
+                                    <div class="col-6">{{ "%.1f"|format(raw_prob_b * 100) }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="alert alert-info alert-permanent">
+                                <h4 class="alert-heading">Raw Win Probabilities</h4>
+                                <div class="row mb-2">
+                                    <div class="col-6 text-end fw-bold">{{ team_a }}:</div>
+                                    <div class="col-6">{{ "%.1f"|format(raw_prob_a * 100) }}%</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">{{ team_b }}:</div>
+                                    <div class="col-6">{{ "%.1f"|format(raw_prob_b * 100) }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="alert alert-warning alert-permanent">
+                                <h4 class="alert-heading">Adjusted Win Probabilities</h4>
+                                <div class="row mb-2">
+                                    <div class="col-6 text-end fw-bold">{{ team_a }}:</div>
+                                    <div class="col-6">{{ "%.1f"|format(adj_prob_a * 100) }}%</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">{{ team_b }}:</div>
+                                    <div class="col-6">{{ "%.1f"|format(adj_prob_b * 100) }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="row mb-4">
+                        <div class="col">
+                            <div class="alert alert-success alert-permanent">
+                                <h4 class="alert-heading">American Odds</h4>
+                                <div class="row mb-2">
+                                    <div class="col-6 text-end fw-bold">{{ team_a }}:</div>
+                                    <div class="col-6">{{ odds_a }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">{{ team_b }}:</div>
+                                    <div class="col-6">{{ odds_b }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-secondary alert-permanent small">
+                    <p class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        {% if applied_longshot %}
+                        Longshot bias correction has been applied to adjust win probabilities and odds.
+                        {% else %}
+                        No longshot bias correction has been applied.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('predict_odds') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>New Prediction
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                        <i class="bi bi-house me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+
+{% block title %}Update Game - NCAA Basketball ELO Rating System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Update Game Results ({{ gender|capitalize }})</h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('update_game') }}?gender={{ gender }}" method="post">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        This will permanently update ELO ratings for both teams.
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="team_a" class="form-label">Winning Team</label>
+                            <input type="text" class="form-control" id="team_a" name="team_a" required 
+                                   placeholder="Enter winning team name or ID">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="team_b" class="form-label">Losing Team</label>
+                            <input type="text" class="form-control" id="team_b" name="team_b" required
+                                   placeholder="Enter losing team name or ID">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="score_a" class="form-label">Winner's Score</label>
+                            <input type="number" class="form-control" id="score_a" name="score_a" required min="0" value="0">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="score_b" class="form-label">Loser's Score</label>
+                            <input type="number" class="form-control" id="score_b" name="score_b" required min="0" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Game Location</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="location" id="location_n" value="N" checked>
+                                    <label class="form-check-label" for="location_n">
+                                        Neutral Court
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="location" id="location_a" value="A">
+                                    <label class="form-check-label" for="location_a">
+                                        Winner's Home Court
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="location" id="location_b" value="B">
+                                    <label class="form-check-label" for="location_b">
+                                        Loser's Home Court
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Enter team names or team IDs. You'll have a chance to review before confirming.
+                    </div>
+                    
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary">Continue to Review</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('dashboard') }}?gender={{ gender }}" class="btn btn-secondary">
+                    <i class="bi bi-house me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+{% endblock %} 

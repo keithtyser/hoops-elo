@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+
+{% block title %}Update Complete - NCAA Basketball ELO Rating System{% endblock %}
+
+{% block extra_css %}
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block head_extra %}
+<meta http-equiv="refresh" content="none">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h2 class="card-title mb-0">Update Complete</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success alert-permanent mb-4">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong>Success!</strong> The ELO ratings have been updated successfully.
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">{{ winner_name }}</h5>
+                                <small class="text-white-50">Winner</small>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Old Rating:</div>
+                                    <div class="col-6">{{ old_rating_winner|round(1) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">New Rating:</div>
+                                    <div class="col-6">{{ new_rating_winner|round(1) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Change:</div>
+                                    <div class="col-6 text-success">+{{ winner_change|round(1) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="card-title mb-0">{{ loser_name }}</h5>
+                                <small class="text-white-50">Loser</small>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Old Rating:</div>
+                                    <div class="col-6">{{ old_rating_loser|round(1) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">New Rating:</div>
+                                    <div class="col-6">{{ new_rating_loser|round(1) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Change:</div>
+                                    <div class="col-6 text-danger">{{ loser_change|round(1) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info alert-permanent">
+                    <p class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        These ratings have been saved and will be used for future predictions.
+                    </p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('update_game') }}?gender={{ gender }}" class="btn btn-secondary me-2">
+                        <i class="bi bi-plus-circle me-2"></i>Update Another Game
+                    </a>
+                    <a href="{{ url_for('dashboard') }}?gender={{ gender }}" class="btn btn-primary">
+                        <i class="bi bi-house-door me-2"></i>Return to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

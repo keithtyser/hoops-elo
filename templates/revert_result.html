@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block title %}Revert Complete - NCAA Basketball ELO Rating System{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block head_extra %}
+<meta http-equiv="refresh" content="none">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h2 class="card-title mb-0">Revert Operation Complete</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success alert-permanent mb-4">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong>Success!</strong> The last update has been successfully reverted.
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">{{ team1_name }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Updated Rating:</div>
+                                    <div class="col-6">{{ team1_new_rating|round(1) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Previous Rating:</div>
+                                    <div class="col-6">{{ team1_old_rating|round(1) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Change:</div>
+                                    <div class="col-6">
+                                        {% if team1_change > 0 %}
+                                            <span class="text-success">+{{ team1_change|round(1) }}</span>
+                                        {% elif team1_change < 0 %}
+                                            <span class="text-danger">{{ team1_change|round(1) }}</span>
+                                        {% else %}
+                                            <span>0.0</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">{{ team2_name }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Updated Rating:</div>
+                                    <div class="col-6">{{ team2_new_rating|round(1) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Previous Rating:</div>
+                                    <div class="col-6">{{ team2_old_rating|round(1) }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 text-end fw-bold">Change:</div>
+                                    <div class="col-6">
+                                        {% if team2_change > 0 %}
+                                            <span class="text-success">+{{ team2_change|round(1) }}</span>
+                                        {% elif team2_change < 0 %}
+                                            <span class="text-danger">{{ team2_change|round(1) }}</span>
+                                        {% else %}
+                                            <span>0.0</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info alert-permanent">
+                    <p class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        The ratings have been restored to their values before the last game update.
+                    </p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                        <i class="bi bi-house-door me-2"></i>Return to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

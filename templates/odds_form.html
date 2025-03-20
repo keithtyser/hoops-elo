@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}Predict Odds - NCAA Basketball ELO Rating System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Predict Win Probability & Odds ({{ gender|capitalize }})</h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('predict_odds') }}?gender={{ gender }}" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="team_a" class="form-label">Team A</label>
+                            <input type="text" class="form-control" id="team_a" name="team_a" required 
+                                   placeholder="Enter team name or ID">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="team_b" class="form-label">Team B</label>
+                            <input type="text" class="form-control" id="team_b" name="team_b" required
+                                   placeholder="Enter team name or ID">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="longshot" name="longshot" value="y">
+                            <label class="form-check-label" for="longshot">
+                                Apply longshot bias adjustment
+                            </label>
+                            <div class="form-text">
+                                This adjusts probabilities to account for longshot bias in betting markets.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Enter team names or team IDs. Win probabilities will be calculated based on current ELO ratings.
+                    </div>
+                    
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary">Calculate Odds</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('dashboard') }}?gender={{ gender }}" class="btn btn-secondary">
+                    <i class="bi bi-house me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+{% endblock %} 
