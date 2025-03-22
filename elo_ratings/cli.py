@@ -259,8 +259,6 @@ def interactive_mode(gender, data_dir):
             else:
                 print("\nThe game is a pick'em (even spread)")
             
-            print(f"\nThis prediction uses a slope factor of {slope:.4f} and {home_court} ELO points for home court advantage.")
-            
         elif choice == '2':
             # Predict win probability and odds
             team_a = input("Enter Team A name or ID: ")

@@ -64,9 +64,7 @@
                 
                 <div class="alert alert-info alert-permanent">
                     <p class="mb-0">
-                        <strong>Note:</strong> This prediction is based on current ELO ratings and uses a slope factor of {{ "%.4f"|format(0.033 if gender == 'men' else 0.0434) }} 
-                        points per ELO point difference for {{ gender }}'s basketball, plus a home court advantage of 
-                        {{ 75 if gender == 'men' else 50 }} ELO points if applicable.
+                        <strong>Note:</strong> This prediction is based on current ELO ratings for {{ gender }}'s basketball.
                     </p>
                 </div>
             </div>
