@@ -32,8 +32,11 @@ def main():
     if args.gender:
         load_data(args.gender, args.data_dir)
     
+    # Always run in debug mode unless explicitly disabled
+    debug_mode = True if not hasattr(args, 'no_debug') else not args.no_debug
+    
     # Run the Flask application
-    run_web_ui(host=args.host, port=args.port, debug=args.debug)
+    run_web_ui(host=args.host, port=args.port, debug=debug_mode)
 
 if __name__ == "__main__":
     main() 

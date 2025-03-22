@@ -13,7 +13,8 @@ import numpy as np
 from .data_loader import load_mens_data, load_womens_data, make_team_name_dict
 from .elo import (
     load_ratings, save_ratings, update_single_game, 
-    fuzzy_team_search, predict_spread_single, get_final_ratings_dict
+    fuzzy_team_search, predict_spread_single, get_final_ratings_dict,
+    load_rating_changes, save_rating_changes
 )
 from .utils import to_american_odds, apply_longshot, prob_and_odds
 from .config import load_config, get_gender_config
@@ -35,6 +36,7 @@ app_state = {
     'last_update_info': None,      # For revert info display
     'rating_changes': {},          # For tracking rating changes
     'ratings_file': None,
+    'changes_file': None,          # File for rating changes
     'is_men': None,
     'home_court': None,
     'slope': None,
@@ -52,33 +54,78 @@ def load_data(gender, data_dir='data'):
     data_dir : str
         Directory containing data files
     """
+    app.logger.info(f"load_data called with gender={gender}, data_dir={data_dir}")
     app_state['gender'] = gender
     app_state['data_dir'] = data_dir
     
     # Get gender-specific configuration
-    gender_config = get_gender_config(gender, app_state['config'])
+    try:
+        app.logger.info(f"Loading gender configuration for {gender}")
+        gender_config = get_gender_config(gender, app_state['config'])
+        app.logger.info(f"Gender configuration loaded: {gender_config}")
+    except Exception as e:
+        app.logger.error(f"Error loading gender configuration: {str(e)}", exc_info=True)
+        raise
     
-    if gender == "men":
-        _, _, teams_df, _, _ = load_mens_data(data_dir)
-        app_state['ratings_file'] = f"elo_ratings_men_2025.json"
-        app_state['is_men'] = True
-    else:  # women
-        _, _, teams_df, _, _ = load_womens_data(data_dir)
-        app_state['ratings_file'] = f"elo_ratings_women_2025.json"
-        app_state['is_men'] = False
+    try:
+        if gender == "men":
+            app.logger.info("Loading men's basketball data")
+            _, _, teams_df, _, _ = load_mens_data(data_dir)
+            app_state['ratings_file'] = f"elo_ratings_men_2025.json"
+            app_state['changes_file'] = f"rating_changes_men_2025.json"
+            app_state['is_men'] = True
+            app.logger.info(f"Men's ratings file: {app_state['ratings_file']}")
+            app.logger.info(f"Men's changes file: {app_state['changes_file']}")
+        else:  # women
+            app.logger.info("Loading women's basketball data")
+            _, _, teams_df, _, _ = load_womens_data(data_dir)
+            app_state['ratings_file'] = f"elo_ratings_women_2025.json"
+            app_state['changes_file'] = f"rating_changes_women_2025.json"
+            app_state['is_men'] = False
+            app.logger.info(f"Women's ratings file: {app_state['ratings_file']}")
+            app.logger.info(f"Women's changes file: {app_state['changes_file']}")
     
-    # Set parameters from configuration
-    app_state['home_court'] = gender_config['home_court']
-    app_state['slope'] = gender_config['slope']
-    
-    app_state['teams_df'] = teams_df
-    app_state['team_name_dict'] = make_team_name_dict(teams_df)
-    
-    # Load ratings
-    app_state['rating_dict'] = load_ratings(app_state['ratings_file'])
-    if not app_state['rating_dict']:
-        app.logger.warning(f"No ratings found in {app_state['ratings_file']}. Starting with default ratings.")
-        app_state['rating_dict'] = {}
+        # Set parameters from configuration
+        app_state['home_court'] = gender_config['home_court']
+        app_state['slope'] = gender_config['slope']
+        
+        app_state['teams_df'] = teams_df
+        app.logger.info(f"Loaded teams_df with {len(teams_df)} teams")
+        
+        app_state['team_name_dict'] = make_team_name_dict(teams_df)
+        app.logger.info(f"Created team_name_dict with {len(app_state['team_name_dict'])} entries")
+        
+        # Load ratings
+        app.logger.info(f"Loading ratings from {app_state['ratings_file']}")
+        app_state['rating_dict'] = load_ratings(app_state['ratings_file'])
+        if not app_state['rating_dict']:
+            app.logger.warning(f"No ratings found in {app_state['ratings_file']}. Starting with default ratings.")
+            app_state['rating_dict'] = {}
+            
+            # Create empty ratings file if it doesn't exist
+            if not os.path.exists(app_state['ratings_file']):
+                app.logger.info(f"Creating empty ratings file: {app_state['ratings_file']}")
+                save_ratings(app_state['rating_dict'], app_state['ratings_file'])
+        else:
+            app.logger.info(f"Loaded {len(app_state['rating_dict'])} team ratings")
+            
+        # Load rating changes
+        app.logger.info(f"Loading rating changes from {app_state['changes_file']}")
+        app_state['rating_changes'] = load_rating_changes(app_state['changes_file'])
+        if not app_state['rating_changes']:
+            app.logger.warning(f"No rating changes found in {app_state['changes_file']}. Starting with empty changes.")
+            app_state['rating_changes'] = {}
+            
+            # Create empty changes file if it doesn't exist
+            if not os.path.exists(app_state['changes_file']):
+                app.logger.info(f"Creating empty changes file: {app_state['changes_file']}")
+                save_rating_changes(app_state['rating_changes'], app_state['changes_file'])
+        else:
+            total_changes = sum(len(changes) for changes in app_state['rating_changes'].values())
+            app.logger.info(f"Loaded rating changes for {len(app_state['rating_changes'])} teams with {total_changes} total changes")
+    except Exception as e:
+        app.logger.error(f"Error in load_data: {str(e)}", exc_info=True)
+        raise
 
 @app.route('/')
 def index():
@@ -89,13 +136,24 @@ def index():
 def set_gender():
     """Set the gender for the session."""
     gender = request.form.get('gender')
+    app.logger.info(f"set_gender called with gender={gender}")
+    app.logger.info(f"Form data received: {request.form}")
+    
     if gender not in ['men', 'women']:
+        app.logger.error(f"Invalid gender selection: '{gender}'")
         flash('Invalid gender selection.', 'error')
         return redirect(url_for('index'))
     
-    load_data(gender)
-    flash(f'Loaded {gender}\'s basketball data.', 'success')
-    return redirect(url_for('dashboard'))
+    try:
+        app.logger.info(f"Loading data for gender: {gender}")
+        load_data(gender)
+        app.logger.info(f"Successfully loaded {gender}'s basketball data")
+        flash(f'Loaded {gender}\'s basketball data.', 'success')
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        app.logger.error(f"Error loading data for gender {gender}: {str(e)}", exc_info=True)
+        flash(f'Error loading data: {str(e)}', 'error')
+        return redirect(url_for('index'))
 
 @app.route('/dashboard')
 def dashboard():
@@ -223,14 +281,16 @@ def predict_spread():
         team_a_id = team_a_matches.iloc[0]['TeamID']
         team_b_id = team_b_matches.iloc[0]['TeamID']
         
+        # Get team names
+        name_a = app_state['team_name_dict'].get(team_a_id, f"Team {team_a_id}")
+        name_b = app_state['team_name_dict'].get(team_b_id, f"Team {team_b_id}")
+        
         # Predict spread
-        spread, name_a, name_b = predict_spread_single(
+        spread = predict_spread_single(
             teamA_id=team_a_id,
             teamB_id=team_b_id,
-            is_men=app_state['is_men'],
-            home_loc=home_loc,
-            rating_dict_men=app_state['rating_dict'] if app_state['is_men'] else None,
-            rating_dict_women=app_state['rating_dict'] if not app_state['is_men'] else None,
+            location=home_loc,
+            rating_dict=app_state['rating_dict'],
             men_slope=app_state['slope'] if app_state['is_men'] else None,
             women_slope=app_state['slope'] if not app_state['is_men'] else None,
             home_court_men=app_state['home_court'] if app_state['is_men'] else None,
@@ -431,14 +491,16 @@ def predict_spread_resolved():
     else:
         home_loc = "N"  # Neutral
     
+    # Get team names from the dictionary
+    name_a = app_state['team_name_dict'].get(team_a_id, f"Team {team_a_id}")
+    name_b = app_state['team_name_dict'].get(team_b_id, f"Team {team_b_id}")
+    
     # Predict spread
-    spread, name_a, name_b = predict_spread_single(
+    spread = predict_spread_single(
         teamA_id=team_a_id,
         teamB_id=team_b_id,
-        is_men=app_state['is_men'],
-        home_loc=home_loc,
-        rating_dict_men=app_state['rating_dict'] if app_state['is_men'] else None,
-        rating_dict_women=app_state['rating_dict'] if not app_state['is_men'] else None,
+        location=home_loc,
+        rating_dict=app_state['rating_dict'],
         men_slope=app_state['slope'] if app_state['is_men'] else None,
         women_slope=app_state['slope'] if not app_state['is_men'] else None,
         home_court_men=app_state['home_court'] if app_state['is_men'] else None,
@@ -747,6 +809,9 @@ def confirm_update():
     # Save to file
     save_ratings(app_state['rating_dict'], app_state['ratings_file'])
     
+    # Save rating changes to file
+    save_rating_changes(app_state['rating_changes'], app_state['changes_file'])
+    
     # Compute rating changes
     new_rating_winner = app_state['rating_dict'][winner_id]
     new_rating_loser = app_state['rating_dict'][loser_id]
@@ -872,6 +937,9 @@ def revert_update():
     if loser_info['id'] in app_state['rating_changes'] and len(app_state['rating_changes'][loser_info['id']]) > 0:
         app_state['rating_changes'][loser_info['id']].pop()  # Remove last entry
     
+    # Save rating changes to file
+    save_rating_changes(app_state['rating_changes'], app_state['changes_file'])
+    
     # Restore previous ratings
     app_state['rating_dict'] = app_state['previous_rating_dict']
     
@@ -985,7 +1053,10 @@ def spread_prediction_post():
     
     # Calculate spread
     spread = predict_spread_single(
-        team_a_id, team_b_id, location, app_state['rating_dict'],
+        teamA_id=team_a_id,
+        teamB_id=team_b_id,
+        location=location,
+        rating_dict=app_state['rating_dict'],
         men_slope=gender_config['slope'] if app_state['is_men'] else None,
         women_slope=gender_config['slope'] if not app_state['is_men'] else None,
         home_court_men=gender_config['home_court'] if app_state['is_men'] else None,
@@ -1067,7 +1138,10 @@ def odds_prediction_post():
     
     # Calculate spread
     spread = predict_spread_single(
-        team_a_id, team_b_id, 'N', app_state['rating_dict'],
+        teamA_id=team_a_id,
+        teamB_id=team_b_id,
+        location='N',
+        rating_dict=app_state['rating_dict'],
         men_slope=gender_config['slope'] if app_state['is_men'] else None,
         women_slope=gender_config['slope'] if not app_state['is_men'] else None,
         home_court_men=gender_config['home_court'] if app_state['is_men'] else None,

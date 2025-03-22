@@ -36,7 +36,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const forms = document.querySelectorAll('form');
     forms.forEach(function(form) {
         form.addEventListener('submit', function(e) {
-            // Allow normal form submission but ensure no auto-refresh
+            // Don't interfere with gender selection form
+            if (form.action.includes('set_gender')) {
+                // Just let it submit normally
+                return;
+            }
+            
+            // For other forms, add processing indicators
             const submitButton = form.querySelector('button[type="submit"]');
             if (submitButton) {
                 submitButton.disabled = true;

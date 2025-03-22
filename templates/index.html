@@ -20,14 +20,31 @@
                 
                 <h4 class="text-center mb-3">Select Basketball Category</h4>
                 
-                <form action="{{ url_for('set_gender') }}" method="post" class="d-flex justify-content-center gap-3">
-                    <button type="submit" name="gender" value="men" class="btn btn-lg btn-primary px-4 py-3">
-                        <i class="bi bi-gender-male me-2"></i>Men's Basketball
-                    </button>
-                    <button type="submit" name="gender" value="women" class="btn btn-lg btn-success px-4 py-3">
-                        <i class="bi bi-gender-female me-2"></i>Women's Basketball
-                    </button>
+                <form action="{{ url_for('set_gender') }}" method="post" id="gender-form">
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="submit" name="gender" value="men" class="btn btn-lg btn-primary px-4 py-3">
+                            <i class="bi bi-gender-male me-2"></i>Men's Basketball
+                        </button>
+                        <button type="submit" name="gender" value="women" class="btn btn-lg btn-success px-4 py-3">
+                            <i class="bi bi-gender-female me-2"></i>Women's Basketball
+                        </button>
+                    </div>
                 </form>
+                
+                <!-- Debugging form -->
+                <div class="mt-4 text-center">
+                    <h5>Debugging Options</h5>
+                    <div class="d-flex justify-content-center gap-3 mt-2">
+                        <form action="{{ url_for('set_gender') }}" method="post" class="d-inline">
+                            <input type="hidden" name="gender" value="men">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Debug Men's</button>
+                        </form>
+                        <form action="{{ url_for('set_gender') }}" method="post" class="d-inline">
+                            <input type="hidden" name="gender" value="women">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Debug Women's</button>
+                        </form>
+                    </div>
+                </div>
                 
                 <div class="alert alert-secondary alert-permanent mt-4">
                     <h5>About ELO Ratings</h5>
@@ -52,4 +69,55 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add direct click handlers for gender buttons
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the form and buttons
+    const form = document.getElementById('gender-form');
+    const menButton = form.querySelector('button[value="men"]');
+    const womenButton = form.querySelector('button[value="women"]');
+    
+    // Add click handlers
+    menButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Men button clicked');
+        
+        // Create and submit a form directly
+        const tempForm = document.createElement('form');
+        tempForm.method = 'post';
+        tempForm.action = '{{ url_for("set_gender") }}';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'gender';
+        input.value = 'men';
+        
+        tempForm.appendChild(input);
+        document.body.appendChild(tempForm);
+        tempForm.submit();
+    });
+    
+    womenButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Women button clicked');
+        
+        // Create and submit a form directly
+        const tempForm = document.createElement('form');
+        tempForm.method = 'post';
+        tempForm.action = '{{ url_for("set_gender") }}';
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'gender';
+        input.value = 'women';
+        
+        tempForm.appendChild(input);
+        document.body.appendChild(tempForm);
+        tempForm.submit();
+    });
+});
+</script>
 {% endblock %} 

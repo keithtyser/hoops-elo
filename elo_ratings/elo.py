@@ -446,6 +446,25 @@ def save_ratings(rating_dict, filename="elo_ratings.json"):
     
     logger.info(f"Saved {len(rating_dict)} team ratings to {filename}")
 
+def save_rating_changes(rating_changes, filename="rating_changes.json"):
+    """
+    Save rating changes history to a JSON file.
+    
+    Parameters
+    ----------
+    rating_changes : dict
+        Dictionary mapping team IDs to their rating change history
+    filename : str, optional
+        Output filename
+    """
+    # Convert keys to strings for JSON compatibility
+    str_dict = {str(k): v for k, v in rating_changes.items()}
+    
+    with open(filename, 'w') as f:
+        json.dump(str_dict, f, indent=2)
+    
+    logger.info(f"Saved rating changes for {len(rating_changes)} teams to {filename}")
+
 def load_ratings(ratings_file: str) -> Dict[int, float]:
     """
     Load ratings from a file. Return empty dict if file doesn't exist or is invalid.
@@ -472,6 +491,33 @@ def load_ratings(ratings_file: str) -> Dict[int, float]:
         print(f"Error loading ratings from {ratings_file}: {e}")
     
     return rating_dict
+
+def load_rating_changes(changes_file: str) -> Dict[int, List[Dict]]:
+    """
+    Load rating changes from a file. Return empty dict if file doesn't exist or is invalid.
+    
+    Parameters
+    ----------
+    changes_file : str
+        File from which to load rating changes
+        
+    Returns
+    -------
+    Dict[int, List[Dict]]
+        Dictionary of team IDs to their rating change history
+    """
+    rating_changes = {}
+    try:
+        if os.path.exists(changes_file):
+            with open(changes_file, 'r') as f:
+                rating_changes = json.load(f)
+            
+            # Convert string keys to integers
+            rating_changes = {int(k): v for k, v in rating_changes.items()}
+    except Exception as e:
+        logger.error(f"Error loading rating changes from {changes_file}: {e}")
+    
+    return rating_changes
 
 def get_final_ratings_dict(elo_df, season=2025):
     """

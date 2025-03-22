@@ -43,4 +43,10 @@ config.json
 Thumbs.db 
 
 # Data files
-data/ 
+data/
+
+# Rating files
+elo_ratings_men_2025.json
+elo_ratings_women_2025.json
+rating_changes_men_2025.json
+rating_changes_women_2025.json 
